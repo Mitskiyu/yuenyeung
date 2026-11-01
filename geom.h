@@ -4,6 +4,8 @@
 #include "base.h"
 #include "math.h"
 
+#include <cmath>
+
 struct ray {
   v3f32 origin;
   v3f32 dir;
@@ -18,24 +20,31 @@ inline v3f32 at(ray r, f32 t) {
   return r.origin + t * r.dir;
 }
 
-inline bool hit(sphere s, ray r) {
+inline f32 hit(sphere s, ray r) {
   v3f32 oc = s.center - r.origin;
   f32   a  = lensq(r.dir);
   f32   b  = -2.0f * dot(r.dir, oc);
   f32   c  = lensq(oc) - s.radius * s.radius;
   f32   d  = b * b - 4 * a * c;
 
-  return (d >= 0);
+  if (d < 0)
+    return -1.0f;
+  return (-b - std::sqrt(d)) / (2.0f * a);
 }
 
 inline v3f32 color(ray r) {
-  if (hit({{0.0f, 0.0f, -1.0f}, 0.5f}, r))
-    return {1.0f, 0.0f, 0.0f};
+  sphere s = {{0, 0, -1}, 0.5f};
+  f32    t = hit(s, r);
+  if (t > 0.0f) {
+    v3f32 n = unit(at(r, t) - s.center);
+    return 0.5f * v3f32{n.x + 1.0f, n.y + 1.0f, n.z + 1.0f};
+  }
 
   v3f32 unit_dir = unit(r.dir);
-  f32   t        = 0.5f * (unit_dir.y + 1.0f);
+  f32   blend    = 0.5f * (unit_dir.y + 1.0f);
 
-  return (1.0f - t) * v3f32{1.0f, 1.0f, 1.0f} + t * v3f32{0.5f, 0.7f, 1.0f};
+  return (1.0f - blend) * v3f32{1.0f, 1.0f, 1.0f} +
+         blend * v3f32{0.5f, 0.7f, 1.0f};
 }
 
 #endif
