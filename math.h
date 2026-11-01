@@ -2,6 +2,7 @@
 #define YUENYEUNG_MATH_H
 
 #include "base.h"
+
 #include <cmath>
 
 struct v3f32 {
@@ -69,12 +70,12 @@ inline v3f32 cross(v3f32 a, v3f32 b) {
   return {a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x};
 }
 
-inline f32 sqlen(v3f32 v) {
+inline f32 lensq(v3f32 v) {
   return dot(v, v);
 }
 
 inline f32 len(v3f32 v) {
-  return sqrtf(sqlen(v));
+  return std::sqrt(lensq(v));
 }
 
 inline v3f32 unit(v3f32 v) {

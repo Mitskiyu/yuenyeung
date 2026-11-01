@@ -1,3 +1,9 @@
 AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveDeclarations: Consecutive
 AllowShortFunctionsOnASingleLine: None
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^".*"'
+    Priority: 1
+  - Regex: '^<.*>'
+    Priority: 2

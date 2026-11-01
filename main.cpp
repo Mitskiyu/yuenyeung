@@ -1,7 +1,7 @@
+#include "base.h"
+
 #include <cstdio>
 #include <print>
-
-#include "base.h"
 
 int main() {
   int img_width  = 256;
