@@ -1,0 +1,8 @@
+# Build
+build/
+
+# Renders
+*.ppm
+
+# clangd
+.cache/
