@@ -1,7 +1,7 @@
 #include "base.h"
 #include "color.h"
+#include "geom.h"
 #include "math.h"
-#include "ray.h"
 
 #include <cstdio>
 #include <print>
