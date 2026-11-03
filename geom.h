@@ -23,13 +23,13 @@ inline v3f32 at(ray r, f32 t) {
 inline f32 hit(sphere s, ray r) {
   v3f32 oc = s.center - r.origin;
   f32   a  = lensq(r.dir);
-  f32   b  = -2.0f * dot(r.dir, oc);
+  f32   h  = dot(r.dir, oc);
   f32   c  = lensq(oc) - s.radius * s.radius;
-  f32   d  = b * b - 4 * a * c;
+  f32   d  = h * h - a * c;
 
   if (d < 0)
-    return -1.0f;
-  return (-b - std::sqrt(d)) / (2.0f * a);
+    return -1;
+  return (h - std::sqrt(d)) / a;
 }
 
 inline v3f32 color(ray r) {
