@@ -1,5 +1,5 @@
-#ifndef YUENYEUNG_RAY_H
-#define YUENYEUNG_RAY_H
+#ifndef YUENYEUNG_GEOM_H
+#define YUENYEUNG_GEOM_H
 
 #include "base.h"
 #include "math.h"
@@ -35,16 +35,15 @@ inline f32 hit(sphere s, ray r) {
 inline v3f32 color(ray r) {
   sphere s = {{0, 0, -1}, 0.5f};
   f32    t = hit(s, r);
-  if (t > 0.0f) {
+  if (t > 0) {
     v3f32 n = unit(at(r, t) - s.center);
-    return 0.5f * v3f32{n.x + 1.0f, n.y + 1.0f, n.z + 1.0f};
+    return 0.5f * v3f32{n.x + 1, n.y + 1, n.z + 1};
   }
 
   v3f32 unit_dir = unit(r.dir);
-  f32   blend    = 0.5f * (unit_dir.y + 1.0f);
+  f32   blend    = 0.5f * (unit_dir.y + 1);
 
-  return (1.0f - blend) * v3f32{1.0f, 1.0f, 1.0f} +
-         blend * v3f32{0.5f, 0.7f, 1.0f};
+  return (1 - blend) * v3f32{1, 1, 1} + blend * v3f32{0.5f, 0.7f, 1};
 }
 
 #endif

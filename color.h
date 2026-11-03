@@ -12,9 +12,9 @@ inline std::string write_color(v3f32 color) {
   f32 g = color.y;
   f32 b = color.z;
 
-  i32 rb = i32(255.999 * r);
-  i32 gb = i32(255.999 * g);
-  i32 bb = i32(255.999 * b);
+  i32 rb = static_cast<i32>(255.999f * r);
+  i32 gb = static_cast<i32>(255.999f * g);
+  i32 bb = static_cast<i32>(255.999f * b);
 
   return std::format("{} {} {}", rb, gb, bb);
 }
