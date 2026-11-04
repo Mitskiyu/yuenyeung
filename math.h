@@ -4,6 +4,11 @@
 #include "base.h"
 
 #include <cmath>
+#include <limits>
+#include <numbers>
+
+inline constexpr f32 inf = std::numeric_limits<f32>::infinity();
+inline constexpr f32 pi  = std::numbers::pi_v<f32>;
 
 struct v3f32 {
   f32 x, y, z;
@@ -80,6 +85,10 @@ inline f32 len(v3f32 v) {
 
 inline v3f32 unit(v3f32 v) {
   return v / len(v);
+}
+
+inline f32 deg_to_rad(f32 deg) {
+  return deg * pi / 180;
 }
 
 #endif

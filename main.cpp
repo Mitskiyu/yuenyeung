@@ -6,11 +6,17 @@
 #include <cstdio>
 #include <print>
 
+static v3f32 ray_color(const scene &world, ray r);
+
 int main() {
   f32 aspect_ratio = 16.0f / 9.0f;
   i32 img_width    = 1024;
   i32 img_height   = static_cast<i32>(img_width / aspect_ratio);
   img_height       = (img_height < 1) ? 1 : img_height;
+
+  scene world;
+  world.spheres.push_back({{0, 0, -1}, 0.5f});
+  world.spheres.push_back({{0, -100.5f, -1}, 100});
 
   f32 focal_length    = 1;
   f32 viewport_height = 2;
@@ -38,10 +44,20 @@ int main() {
       v3f32 ray_dir      = pixel_center - camera_center;
       ray   r            = {camera_center, ray_dir};
 
-      v3f32 pixel_color = color(r);
+      v3f32 pixel_color = ray_color(world, r);
       std::println("{}", write_color(pixel_color));
     }
   }
 
   std::println(stderr, "\rDone                       ");
+}
+
+static v3f32 ray_color(const scene &world, ray r) {
+  if (auto h = isect(world, r, 0, inf))
+    return 0.5f * (h->normal + v3f32{1, 1, 1});
+
+  v3f32 unit_dir = unit(r.dir);
+  f32   t        = 0.5f * (unit_dir.y + 1);
+
+  return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
 }
