@@ -33,7 +33,7 @@ inline v3f32 at(ray r, f32 t) {
   return r.origin + t * r.dir;
 }
 
-inline std::optional<hit> isect(sphere s, ray r, f32 tmin, f32 tmax) {
+inline std::optional<hit> isect(sphere s, ray r, interval t_range) {
   v3f32 oc = s.center - r.origin;
   f32   a  = lensq(r.dir);
   f32   h  = dot(r.dir, oc);
@@ -45,10 +45,10 @@ inline std::optional<hit> isect(sphere s, ray r, f32 tmin, f32 tmax) {
 
   f32 sqrtd = std::sqrt(d);
   f32 root  = (h - sqrtd) / a;
-  if (root <= tmin || tmax <= root) {
+  if (!surrounds(t_range, root)) {
     root = (h + sqrtd) / a;
 
-    if (root <= tmin || tmax <= root)
+    if (!surrounds(t_range, root))
       return std::nullopt;
   }
 
@@ -59,12 +59,12 @@ inline std::optional<hit> isect(sphere s, ray r, f32 tmin, f32 tmax) {
   return hit{outside ? outward : -outward, p, root, outside};
 }
 
-inline std::optional<hit> isect(const scene &s, ray r, f32 tmin, f32 tmax) {
+inline std::optional<hit> isect(const scene &s, ray r, interval t_range) {
   std::optional<hit> best    = std::nullopt;
-  f32                closest = tmax;
+  f32                closest = t_range.max;
 
   for (auto sph : s.spheres) {
-    if (auto h = isect(sph, r, tmin, closest)) {
+    if (auto h = isect(sph, r, {t_range.min, closest})) {
       best    = h;
       closest = h->t;
     }

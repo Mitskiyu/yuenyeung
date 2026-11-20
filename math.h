@@ -10,6 +10,23 @@
 inline constexpr f32 inf = std::numeric_limits<f32>::infinity();
 inline constexpr f32 pi  = std::numbers::pi_v<f32>;
 
+struct interval {
+  f32 min, max;
+
+  static const interval empty, universe;
+};
+
+inline constexpr interval interval::empty    = interval{+inf, -inf};
+inline constexpr interval interval::universe = interval{-inf, +inf};
+
+inline bool contains(interval iv, f32 x) {
+  return iv.min <= x && x <= iv.max;
+}
+
+inline bool surrounds(interval iv, f32 x) {
+  return iv.min < x && x < iv.max;
+}
+
 struct v3f32 {
   f32 x, y, z;
 

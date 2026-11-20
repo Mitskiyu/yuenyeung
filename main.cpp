@@ -53,7 +53,7 @@ int main() {
 }
 
 static v3f32 ray_color(const scene &world, ray r) {
-  if (auto h = isect(world, r, 0, inf))
+  if (auto h = isect(world, r, {0, inf}))
     return 0.5f * (h->normal + v3f32{1, 1, 1});
 
   v3f32 unit_dir = unit(r.dir);
