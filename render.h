@@ -1,0 +1,82 @@
+#ifndef YUENYEUNG_RENDER_H
+#define YUENYEUNG_RENDER_H
+
+#include "base.h"
+#include "color.h"
+#include "geom.h"
+#include "math.h"
+
+#include <cstdio>
+#include <print>
+
+struct camera {
+  f32   aspect_ratio;
+  i32   img_width;
+  v3f32 center;
+
+  // computed
+  i32   img_height;
+  v3f32 px_dt_x, px_dt_y;
+  v3f32 px_origin;
+};
+
+inline camera make_camera(f32 aspect_ratio, i32 img_width) {
+  i32 img_height = static_cast<i32>(img_width / aspect_ratio);
+  img_height     = (img_height < 1) ? 1 : img_height;
+
+  v3f32 center = {0, 0, 0};
+
+  f32 focal_length = 1;
+  f32 vp_height    = 2;
+  f32 vp_width     = vp_height * static_cast<f32>(img_width) / img_height;
+
+  v3f32 vp_x = {vp_width, 0, 0};
+  v3f32 vp_y = {0, -vp_height, 0};
+
+  v3f32 px_dt_x = vp_x / static_cast<f32>(img_width);
+  v3f32 px_dt_y = vp_y / static_cast<f32>(img_height);
+
+  v3f32 vp_ul     = center - v3f32{0, 0, focal_length} - vp_x / 2 - vp_y / 2;
+  v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
+
+  return camera{
+      .aspect_ratio = aspect_ratio,
+      .img_width    = img_width,
+      .center       = center,
+      .img_height   = img_height,
+      .px_dt_x      = px_dt_x,
+      .px_dt_y      = px_dt_y,
+      .px_origin    = px_origin,
+  };
+}
+
+inline v3f32 ray_color(const scene &world, ray r) {
+  if (auto h = isect(world, r, {0, inf}))
+    return 0.5f * (h->normal + v3f32{1, 1, 1});
+
+  v3f32 unit_dir = unit(r.dir);
+  f32   t        = 0.5f * (unit_dir.y + 1);
+
+  return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
+}
+
+inline void render(const scene &world, const camera &cam) {
+  std::println("P3\n{} {}\n255", cam.img_width, cam.img_height);
+  for (i32 y{}; y < cam.img_height; y++) {
+    std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
+
+    for (i32 x{}; x < cam.img_width; x++) {
+      v3f32 px_center = cam.px_origin + (static_cast<f32>(x) * cam.px_dt_x) +
+                        (static_cast<f32>(y) * cam.px_dt_y);
+      v3f32 ray_dir   = px_center - cam.center;
+      ray   r         = {cam.center, ray_dir};
+
+      v3f32 px_color = ray_color(world, r);
+      std::println("{}", write_color(px_color));
+    }
+  }
+
+  std::println(stderr, "\rDone                       ");
+}
+
+#endif
