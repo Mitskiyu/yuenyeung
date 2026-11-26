@@ -5,6 +5,7 @@
 #include "color.h"
 #include "geom.h"
 #include "math.h"
+#include "random.h"
 
 #include <cstdio>
 #include <print>
@@ -12,17 +13,21 @@
 struct camera {
   f32   aspect_ratio;
   i32   img_width;
+  i32   samples_per_px;
   v3f32 center;
 
   // computed
   i32   img_height;
+  f32   px_samples_scale;
   v3f32 px_dt_x, px_dt_y;
   v3f32 px_origin;
 };
 
-inline camera make_camera(f32 aspect_ratio, i32 img_width) {
+inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 samples_per_px) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
+
+  f32 px_samples_scale = 1.0f / samples_per_px;
 
   v3f32 center = {0, 0, 0};
 
@@ -40,14 +45,30 @@ inline camera make_camera(f32 aspect_ratio, i32 img_width) {
   v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
 
   return camera{
-      .aspect_ratio = aspect_ratio,
-      .img_width    = img_width,
-      .center       = center,
-      .img_height   = img_height,
-      .px_dt_x      = px_dt_x,
-      .px_dt_y      = px_dt_y,
-      .px_origin    = px_origin,
+      .aspect_ratio     = aspect_ratio,
+      .img_width        = img_width,
+      .samples_per_px   = samples_per_px,
+      .center           = center,
+      .img_height       = img_height,
+      .px_samples_scale = px_samples_scale,
+      .px_dt_x          = px_dt_x,
+      .px_dt_y          = px_dt_y,
+      .px_origin        = px_origin,
   };
+}
+
+inline v3f32 sample_sq() {
+  return v3f32{rand_f32() - 0.5f, rand_f32() - 0.5f, 0};
+}
+
+inline ray get_ray(const camera &cam, i32 x, i32 y) {
+  v3f32 offset    = sample_sq();
+  v3f32 px_sample = cam.px_origin +
+                    ((static_cast<f32>(x) + offset.x) * cam.px_dt_x) +
+                    ((static_cast<f32>(y) + offset.y) * cam.px_dt_y);
+
+  v3f32 ray_dir = px_sample - cam.center;
+  return ray{cam.center, ray_dir};
 }
 
 inline v3f32 ray_color(const scene &world, ray r) {
@@ -66,13 +87,13 @@ inline void render(const scene &world, const camera &cam) {
     std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
 
     for (i32 x{}; x < cam.img_width; x++) {
-      v3f32 px_center = cam.px_origin + (static_cast<f32>(x) * cam.px_dt_x) +
-                        (static_cast<f32>(y) * cam.px_dt_y);
-      v3f32 ray_dir   = px_center - cam.center;
-      ray   r         = {cam.center, ray_dir};
+      v3f32 px_color{0.0f, 0.0f, 0.0f};
+      for (i32 sample{}; sample < cam.samples_per_px; sample++) {
+        ray r = get_ray(cam, x, y);
+        px_color += ray_color(world, r);
+      }
 
-      v3f32 px_color = ray_color(world, r);
-      std::println("{}", write_color(px_color));
+      std::println("{}", write_color(cam.px_samples_scale * px_color));
     }
   }
 

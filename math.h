@@ -27,6 +27,15 @@ inline bool surrounds(interval iv, f32 x) {
   return iv.min < x && x < iv.max;
 }
 
+inline f32 clamp(f32 min, f32 max, f32 x) {
+  if (x < min)
+    return min;
+  if (x > max)
+    return max;
+
+  return x;
+}
+
 struct v3f32 {
   f32 x, y, z;
 
