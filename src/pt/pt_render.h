@@ -9,7 +9,7 @@
 
 namespace pt {
 
-struct camera_settings {
+struct camera_desc {
   f32 aspect_ratio;
   i32 img_width;
   i32 max_depth;
@@ -39,7 +39,7 @@ struct camera {
   v3f32 defocus_disk_x, defocus_disk_y;
 };
 
-camera             make_camera(const camera_settings &s);
+camera             make_camera(const camera_desc &desc);
 std::vector<v3f32> render(const scene &world, const camera &cam);
 } // namespace pt
 
