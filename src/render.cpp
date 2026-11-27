@@ -7,6 +7,7 @@
 #include "math.h"
 #include "random.h"
 
+#include <cmath>
 #include <cstdio>
 #include <print>
 
@@ -43,7 +44,7 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
   return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
 }
 
-camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
+camera make_camera(f32 vfov, f32 aspect_ratio, i32 img_width, i32 max_depth,
                    i32 samples_per_px) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
@@ -53,7 +54,9 @@ camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
   v3f32 center = {0, 0, 0};
 
   f32 focal_length = 1;
-  f32 vp_height    = 2;
+  f32 theta        = deg_to_rad(vfov);
+  f32 h            = std::tan(theta / 2);
+  f32 vp_height    = 2 * h * focal_length;
   f32 vp_width     = vp_height * static_cast<f32>(img_width) / img_height;
 
   v3f32 vp_x = {vp_width, 0, 0};
@@ -66,6 +69,7 @@ camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
   v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
 
   return camera{
+      .vfov             = vfov,
       .aspect_ratio     = aspect_ratio,
       .img_width        = img_width,
       .max_depth        = max_depth,

@@ -6,6 +6,7 @@
 #include "math.h"
 
 struct camera {
+  f32   vfov;
   f32   aspect_ratio;
   i32   img_width;
   i32   max_depth;
