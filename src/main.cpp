@@ -1,3 +1,7 @@
+#if _WIN32
+#include "base/base_os.h"
+#endif
+
 #include "base/base_math.h"
 #include "base/base_random.h"
 #include "base/base_types.h"
@@ -6,6 +10,10 @@
 #include "pt/pt_render.h"
 
 #include "pt/pt_render.cpp"
+#include "win32/win32_base.cpp"
+
+#include <cstdio>
+#include <print>
 
 int main() {
   pt::scene world;
@@ -56,5 +64,8 @@ int main() {
       .target         = {0, 0, 0},
   });
 
+  u64 before = time_now_us();
   pt::render(world, cam);
+  f64 secs = static_cast<f64>(time_now_us() - before) / 1e6;
+  std::println(stderr, "{:.3f}s", secs);
 }

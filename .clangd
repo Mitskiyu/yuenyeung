@@ -6,3 +6,5 @@ CompileFlags:
 Diagnostics:
   UnusedIncludes: Strict
   MissingIncludes: Strict
+  Includes:
+    IgnoreHeader: [".*[/\\\\]um[/\\\\].*", ".*[/\\\\]shared[/\\\\].*"]
