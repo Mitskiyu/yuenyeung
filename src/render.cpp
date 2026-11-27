@@ -51,54 +51,43 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
   return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
 }
 
-camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
-                   i32 samples_per_px, f32 vfov, v3f32 up, v3f32 pos,
-                   v3f32 target, f32 defocus_ang, f32 focus_dist) {
-  i32 img_height = static_cast<i32>(img_width / aspect_ratio);
+camera make_camera(const camera_settings &s) {
+  i32 img_height = static_cast<i32>(s.img_width / s.aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
 
-  f32 px_samples_scale = 1.0f / samples_per_px;
-
-  f32 theta     = deg_to_rad(vfov);
+  f32 theta     = deg_to_rad(s.vfov);
   f32 h         = std::tan(theta / 2);
-  f32 vp_height = 2 * h * focus_dist;
-  f32 vp_width  = vp_height * static_cast<f32>(img_width) / img_height;
+  f32 vp_height = 2 * h * s.focus_dist;
+  f32 vp_width  = vp_height * static_cast<f32>(s.img_width) / img_height;
 
-  v3f32 w = unit(pos - target);
-  v3f32 u = unit(cross(up, w));
+  v3f32 w = unit(s.center - s.target);
+  v3f32 u = unit(cross(s.up, w));
   v3f32 v = cross(w, u);
 
   v3f32 vp_x = vp_width * u;
   v3f32 vp_y = vp_height * -v;
 
-  v3f32 px_dt_x = vp_x / static_cast<f32>(img_width);
+  v3f32 px_dt_x = vp_x / static_cast<f32>(s.img_width);
   v3f32 px_dt_y = vp_y / static_cast<f32>(img_height);
 
-  v3f32 vp_ul     = pos - (focus_dist * w) - vp_x / 2 - vp_y / 2;
+  v3f32 vp_ul     = s.center - (s.focus_dist * w) - vp_x / 2 - vp_y / 2;
   v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
 
-  f32   defocus_rad    = focus_dist * std::tan(deg_to_rad(defocus_ang / 2));
-  v3f32 defocus_disk_x = u * defocus_rad;
-  v3f32 defocus_disk_y = v * defocus_rad;
+  f32 defocus_rad = s.focus_dist * std::tan(deg_to_rad(s.defocus_ang / 2));
 
   return camera{
-      .aspect_ratio     = aspect_ratio,
-      .img_width        = img_width,
-      .max_depth        = max_depth,
-      .samples_per_px   = samples_per_px,
-      .vfov             = vfov,
-      .up               = up,
-      .center           = pos,
-      .target           = target,
-      .defocus_ang      = defocus_ang,
-      .focus_dist       = focus_dist,
+      .img_width        = s.img_width,
       .img_height       = img_height,
-      .px_samples_scale = px_samples_scale,
+      .max_depth        = s.max_depth,
+      .samples_per_px   = s.samples_per_px,
+      .px_samples_scale = 1.0f / s.samples_per_px,
+      .center           = s.center,
       .px_origin        = px_origin,
       .px_dt_x          = px_dt_x,
       .px_dt_y          = px_dt_y,
-      .defocus_disk_x   = defocus_disk_x,
-      .defocus_disk_y   = defocus_disk_y,
+      .defocus_ang      = s.defocus_ang,
+      .defocus_disk_x   = u * defocus_rad,
+      .defocus_disk_y   = v * defocus_rad,
   };
 }
 
