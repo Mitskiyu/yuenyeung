@@ -3,7 +3,7 @@
 
 #include "base/base_math.h"
 #include "base/base_types.h"
-#include "pt/pt_geom.h"
+#include "pt/pt_scene.h"
 
 #include <vector>
 

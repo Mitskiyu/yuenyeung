@@ -5,6 +5,7 @@
 #include "base/base_types.h"
 #include "pt/pt_geom.h"
 #include "pt/pt_material.h"
+#include "pt/pt_scene.h"
 
 #include <cmath>
 #include <cstdio>
@@ -39,7 +40,7 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
     return v3f32{};
 
   constexpr f32 t_min = 0.001f;
-  if (auto h = isect(world, r, {t_min, inf})) {
+  if (auto h = raycast(world, r, {t_min, inf})) {
     material mat = world.materials[h->mat_idx];
     if (auto b = scatter(mat, r.dir, h->normal, h->outside))
       return b->atten * ray_color(world, ray{h->p, b->dir}, depth - 1);

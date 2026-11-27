@@ -3,11 +3,9 @@
 
 #include "base/base_math.h"
 #include "base/base_types.h"
-#include "pt/pt_material.h"
 
 #include <cmath>
 #include <optional>
-#include <vector>
 
 namespace pt {
 
@@ -28,11 +26,6 @@ struct hit {
   f32   t;
   u16   mat_idx;
   bool  outside;
-};
-
-struct scene {
-  std::vector<sphere>   spheres;
-  std::vector<material> materials;
 };
 
 inline v3f32 at(ray r, f32 t) {
@@ -67,20 +60,6 @@ inline std::optional<hit> isect(sphere s, ray r, interval t_range) {
              .t       = root,
              .mat_idx = s.mat_idx,
              .outside = outside};
-}
-
-inline std::optional<hit> isect(const scene &s, ray r, interval t_range) {
-  std::optional<hit> best    = std::nullopt;
-  f32                closest = t_range.max;
-
-  for (auto sph : s.spheres) {
-    if (auto h = isect(sph, r, {t_range.min, closest})) {
-      best    = h;
-      closest = h->t;
-    }
-  }
-
-  return best;
 }
 } // namespace pt
 
