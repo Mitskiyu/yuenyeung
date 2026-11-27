@@ -29,10 +29,11 @@ inline std::string write_color(v3f32 color) {
   f32 g = color.y;
   f32 b = color.z;
 
-  static const interval intensity{0.000f, 0.999f};
-  i32 rb = static_cast<i32>(256 * clamp(intensity.min, intensity.max, r));
-  i32 gb = static_cast<i32>(256 * clamp(intensity.min, intensity.max, g));
-  i32 bb = static_cast<i32>(256 * clamp(intensity.min, intensity.max, b));
+  constexpr interval intensity{0, 0.999f};
+
+  i32 rb = static_cast<i32>(256 * clamp(intensity, r));
+  i32 gb = static_cast<i32>(256 * clamp(intensity, g));
+  i32 bb = static_cast<i32>(256 * clamp(intensity, b));
 
   return std::format("{} {} {}", rb, gb, bb);
 }
