@@ -16,12 +16,16 @@ struct camera {
   v3f32 center;
   v3f32 target;
 
+  f32 defocus_ang;
+  f32 focus_dist;
+
   // computed
   i32   img_height;
   f32   px_samples_scale;
   v3f32 px_origin;
   v3f32 px_dt_x, px_dt_y;
   v3f32 u, v, w;
+  v3f32 defocus_disk_x, defocus_disk_y;
 };
 
 camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,

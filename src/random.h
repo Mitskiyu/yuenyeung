@@ -37,4 +37,12 @@ inline v3f32 rand_v3f32_unit() {
   }
 }
 
+inline v3f32 rand_v3f32_in_disk_unit() {
+  while (true) {
+    v3f32 v = v3f32(rand_f32(-1, 1), rand_f32(-1, 1), 0);
+    if (lensq(v) < 1)
+      return v;
+  }
+}
+
 #endif

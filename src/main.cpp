@@ -12,12 +12,15 @@ int main() {
   i32 max_depth      = 50;
   i32 samples_per_px = 100;
 
-  f32    vfov   = 20;
-  v3f32  up     = {0, 1, 0};
-  v3f32  pos    = {-2, 2, 1};
-  v3f32  target = {0, 0, -1};
+  f32   vfov   = 20;
+  v3f32 up     = {0, 1, 0};
+  v3f32 pos    = {-2, 2, 1};
+  v3f32 target = {0, 0, -1};
+
+  f32    defocus_ang = 10;
+  f32    focus_dist  = 3.4f;
   camera cam = make_camera(aspect_ratio, img_width, max_depth, samples_per_px,
-                           vfov, up, pos, target);
+                           vfov, up, pos, target, defocus_ang, focus_dist);
 
   scene world;
   world.materials = {

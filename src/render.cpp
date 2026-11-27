@@ -15,14 +15,21 @@ static v3f32 sample_sq() {
   return v3f32{rand_f32() - 0.5f, rand_f32() - 0.5f, 0};
 }
 
+static v3f32 sample_defocus_disk(const camera &cam) {
+  v3f32 p = rand_v3f32_in_disk_unit();
+  return cam.center + (p.x * cam.defocus_disk_x) + (p.y * cam.defocus_disk_y);
+}
+
 static ray get_ray(const camera &cam, i32 x, i32 y) {
   v3f32 offset    = sample_sq();
   v3f32 px_sample = cam.px_origin +
                     ((static_cast<f32>(x) + offset.x) * cam.px_dt_x) +
                     ((static_cast<f32>(y) + offset.y) * cam.px_dt_y);
 
-  v3f32 ray_dir = px_sample - cam.center;
-  return ray{cam.center, ray_dir};
+  v3f32 ray_origin =
+      (cam.defocus_ang <= 0) ? cam.center : sample_defocus_disk(cam);
+  v3f32 ray_dir = px_sample - ray_origin;
+  return ray{ray_origin, ray_dir};
 }
 
 static v3f32 ray_color(const scene &world, ray r, i32 depth) {
@@ -46,16 +53,15 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
 
 camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
                    i32 samples_per_px, f32 vfov, v3f32 up, v3f32 pos,
-                   v3f32 target) {
+                   v3f32 target, f32 defocus_ang, f32 focus_dist) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
 
   f32 px_samples_scale = 1.0f / samples_per_px;
 
-  f32 focal_len = len(pos - target);
   f32 theta     = deg_to_rad(vfov);
   f32 h         = std::tan(theta / 2);
-  f32 vp_height = 2 * h * focal_len;
+  f32 vp_height = 2 * h * focus_dist;
   f32 vp_width  = vp_height * static_cast<f32>(img_width) / img_height;
 
   v3f32 w = unit(pos - target);
@@ -68,8 +74,12 @@ camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
   v3f32 px_dt_x = vp_x / static_cast<f32>(img_width);
   v3f32 px_dt_y = vp_y / static_cast<f32>(img_height);
 
-  v3f32 vp_ul     = pos - (focal_len * w) - vp_x / 2 - vp_y / 2;
+  v3f32 vp_ul     = pos - (focus_dist * w) - vp_x / 2 - vp_y / 2;
   v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
+
+  f32   defocus_rad    = focus_dist * std::tan(deg_to_rad(defocus_ang / 2));
+  v3f32 defocus_disk_x = u * defocus_rad;
+  v3f32 defocus_disk_y = v * defocus_rad;
 
   return camera{
       .aspect_ratio     = aspect_ratio,
@@ -80,11 +90,15 @@ camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
       .up               = up,
       .center           = pos,
       .target           = target,
+      .defocus_ang      = defocus_ang,
+      .focus_dist       = focus_dist,
       .img_height       = img_height,
       .px_samples_scale = px_samples_scale,
       .px_origin        = px_origin,
       .px_dt_x          = px_dt_x,
       .px_dt_y          = px_dt_y,
+      .defocus_disk_x   = defocus_disk_x,
+      .defocus_disk_y   = defocus_disk_y,
   };
 }
 
