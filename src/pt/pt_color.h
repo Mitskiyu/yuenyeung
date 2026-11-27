@@ -1,12 +1,14 @@
-#ifndef YUENYEUNG_COLOR_H
-#define YUENYEUNG_COLOR_H
+#ifndef YUENYEUNG_PT_COLOR_H
+#define YUENYEUNG_PT_COLOR_H
 
-#include "base.h"
-#include "math.h"
+#include "base/base_math.h"
+#include "base/base_types.h"
 
 #include <cmath>
 #include <format>
 #include <string>
+
+namespace pt {
 
 inline f32 linear_to_gamma(f32 c) {
   if (c > 0)
@@ -37,5 +39,6 @@ inline std::string write_color(v3f32 color) {
 
   return std::format("{} {} {}", rb, gb, bb);
 }
+} // namespace pt
 
 #endif

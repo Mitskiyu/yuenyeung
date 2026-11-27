@@ -1,13 +1,15 @@
-#ifndef YUENYEUNG_MATERIAL_H
-#define YUENYEUNG_MATERIAL_H
+#ifndef YUENYEUNG_PT_MATERIAL_H
+#define YUENYEUNG_PT_MATERIAL_H
 
-#include "base.h"
-#include "math.h"
-#include "random.h"
+#include "base/base_math.h"
+#include "base/base_random.h"
+#include "base/base_types.h"
 
 #include <algorithm>
 #include <cmath>
 #include <optional>
+
+namespace pt {
 
 enum class material_kind : u8 { matte, metal, dielectric };
 
@@ -88,5 +90,6 @@ inline std::optional<bounce> scatter(material mat, v3f32 inc_dir, v3f32 normal,
 
   return std::nullopt;
 }
+} // namespace pt
 
 #endif

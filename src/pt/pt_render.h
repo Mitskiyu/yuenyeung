@@ -1,9 +1,11 @@
-#ifndef YUENYEUNG_RENDER_H
-#define YUENYEUNG_RENDER_H
+#ifndef YUENYEUNG_PT_RENDER_H
+#define YUENYEUNG_PT_RENDER_H
 
-#include "base.h"
-#include "geom.h"
-#include "math.h"
+#include "base/base_math.h"
+#include "base/base_types.h"
+#include "pt/pt_geom.h"
+
+namespace pt {
 
 struct camera_settings {
   f32 aspect_ratio;
@@ -38,5 +40,6 @@ struct camera {
 camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
                    i32 samples_per_px);
 void   render(const scene &world, const camera &cam);
+} // namespace pt
 
 #endif

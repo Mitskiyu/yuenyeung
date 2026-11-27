@@ -1,8 +1,8 @@
-#ifndef YUENYEUNG_RANDOM_H
-#define YUENYEUNG_RANDOM_H
+#ifndef YUENYEUNG_BASE_RANDOM_H
+#define YUENYEUNG_BASE_RANDOM_H
 
-#include "base.h"
-#include "math.h"
+#include "base/base_math.h"
+#include "base/base_types.h"
 
 #include <cmath>
 #include <limits>

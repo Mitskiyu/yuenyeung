@@ -1,7 +1,7 @@
-#ifndef YUENYEUNG_MATH_H
-#define YUENYEUNG_MATH_H
+#ifndef YUENYEUNG_BASE_MATH_H
+#define YUENYEUNG_BASE_MATH_H
 
-#include "base.h"
+#include "base/base_types.h"
 
 #include <algorithm>
 #include <cmath>

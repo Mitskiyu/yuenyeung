@@ -1,15 +1,17 @@
-#include "render.h"
+#include "pt/pt_render.h"
 
-#include "base.h"
-#include "color.h"
-#include "geom.h"
-#include "material.h"
-#include "math.h"
-#include "random.h"
+#include "base/base_math.h"
+#include "base/base_random.h"
+#include "base/base_types.h"
+#include "pt/pt_color.h"
+#include "pt/pt_geom.h"
+#include "pt/pt_material.h"
 
 #include <cmath>
 #include <cstdio>
 #include <print>
+
+namespace pt {
 
 static v3f32 sample_sq() {
   return v3f32{rand_f32() - 0.5f, rand_f32() - 0.5f, 0};
@@ -109,3 +111,4 @@ void render(const scene &world, const camera &cam) {
 
   std::println(stderr, "\rDone                       ");
 }
+} // namespace pt

@@ -1,5 +1,5 @@
-#ifndef YUENYEUNG_BASE_H
-#define YUENYEUNG_BASE_H
+#ifndef YUENYEUNG_BASE_TYPES_H
+#define YUENYEUNG_BASE_TYPES_H
 
 #include <cstdint>
 

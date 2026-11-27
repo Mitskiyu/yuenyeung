@@ -1,13 +1,15 @@
-#ifndef YUENYEUNG_GEOM_H
-#define YUENYEUNG_GEOM_H
+#ifndef YUENYEUNG_PT_GEOM_H
+#define YUENYEUNG_PT_GEOM_H
 
-#include "base.h"
-#include "material.h"
-#include "math.h"
+#include "base/base_math.h"
+#include "base/base_types.h"
+#include "pt/pt_material.h"
 
 #include <cmath>
 #include <optional>
 #include <vector>
+
+namespace pt {
 
 struct ray {
   v3f32 origin;
@@ -80,5 +82,6 @@ inline std::optional<hit> isect(const scene &s, ray r, interval t_range) {
 
   return best;
 }
+} // namespace pt
 
 #endif
