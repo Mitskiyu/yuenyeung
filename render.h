@@ -13,6 +13,7 @@
 struct camera {
   f32   aspect_ratio;
   i32   img_width;
+  i32   max_depth;
   i32   samples_per_px;
   v3f32 center;
 
@@ -23,7 +24,8 @@ struct camera {
   v3f32 px_origin;
 };
 
-inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 samples_per_px) {
+inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
+                          i32 samples_per_px) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
 
@@ -47,6 +49,7 @@ inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 samples_per_px) {
   return camera{
       .aspect_ratio     = aspect_ratio,
       .img_width        = img_width,
+      .max_depth        = max_depth,
       .samples_per_px   = samples_per_px,
       .center           = center,
       .img_height       = img_height,
@@ -71,9 +74,15 @@ inline ray get_ray(const camera &cam, i32 x, i32 y) {
   return ray{cam.center, ray_dir};
 }
 
-inline v3f32 ray_color(const scene &world, ray r) {
-  if (auto h = isect(world, r, {0, inf}))
-    return 0.5f * (h->normal + v3f32{1, 1, 1});
+inline v3f32 ray_color(const scene &world, ray r, i32 depth) {
+  if (depth <= 0)
+    return v3f32{};
+
+  constexpr f32 t_min = 0.001f;
+  if (auto h = isect(world, r, {t_min, inf})) {
+    v3f32 dir = rand_v3f32_hemi(h->normal);
+    return 0.5f * (ray_color(world, ray{h->p, dir}, --depth));
+  }
 
   v3f32 unit_dir = unit(r.dir);
   f32   t        = 0.5f * (unit_dir.y + 1);
@@ -87,10 +96,10 @@ inline void render(const scene &world, const camera &cam) {
     std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
 
     for (i32 x{}; x < cam.img_width; x++) {
-      v3f32 px_color{0.0f, 0.0f, 0.0f};
+      v3f32 px_color{0, 0, 0};
       for (i32 sample{}; sample < cam.samples_per_px; sample++) {
         ray r = get_ray(cam, x, y);
-        px_color += ray_color(world, r);
+        px_color += ray_color(world, r, cam.max_depth);
       }
 
       std::println("{}", write_color(cam.px_samples_scale * px_color));
