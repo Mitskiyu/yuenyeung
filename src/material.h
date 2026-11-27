@@ -17,6 +17,18 @@ struct material {
   material_kind kind;
 };
 
+inline material make_matte(v3f32 albedo) {
+  return {.albedo = albedo, .kind = material_kind::matte};
+}
+
+inline material make_metal(v3f32 albedo, f32 fuzz) {
+  return {.albedo = albedo, .fuzz = fuzz, .kind = material_kind::metal};
+}
+
+inline material make_dielectric(f32 ior) {
+  return {.ior = ior, .kind = material_kind::dielectric};
+}
+
 struct bounce {
   v3f32 dir;
   v3f32 atten;

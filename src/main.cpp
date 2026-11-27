@@ -15,12 +15,10 @@ int main() {
   scene world;
 
   world.materials = {
-      {.albedo = {0.8f, 0.8f, 0.0f}, .kind = material_kind::matte},
-      {.albedo = {0.1f, 0.2f, 0.5f}, .kind = material_kind::matte},
-      {.ior = 1.5f, .kind = material_kind::dielectric},
-      {.albedo = {0.8f, 0.6f, 0.2f},
-       .fuzz   = 1.0f,
-       .kind   = material_kind::metal},
+      make_matte({0.8f, 0.8f, 0.0f}),
+      make_matte({0.1f, 0.2f, 0.5f}),
+      make_dielectric(1.5f),
+      make_metal({0.8f, 0.6f, 0.2f}, 1),
   };
 
   world.spheres = {
