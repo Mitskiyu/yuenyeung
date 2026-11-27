@@ -44,42 +44,47 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
   return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
 }
 
-camera make_camera(f32 vfov, f32 aspect_ratio, i32 img_width, i32 max_depth,
-                   i32 samples_per_px) {
+camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
+                   i32 samples_per_px, f32 vfov, v3f32 up, v3f32 pos,
+                   v3f32 target) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
 
   f32 px_samples_scale = 1.0f / samples_per_px;
 
-  v3f32 center = {0, 0, 0};
+  f32 focal_len = len(pos - target);
+  f32 theta     = deg_to_rad(vfov);
+  f32 h         = std::tan(theta / 2);
+  f32 vp_height = 2 * h * focal_len;
+  f32 vp_width  = vp_height * static_cast<f32>(img_width) / img_height;
 
-  f32 focal_length = 1;
-  f32 theta        = deg_to_rad(vfov);
-  f32 h            = std::tan(theta / 2);
-  f32 vp_height    = 2 * h * focal_length;
-  f32 vp_width     = vp_height * static_cast<f32>(img_width) / img_height;
+  v3f32 w = unit(pos - target);
+  v3f32 u = unit(cross(up, w));
+  v3f32 v = cross(w, u);
 
-  v3f32 vp_x = {vp_width, 0, 0};
-  v3f32 vp_y = {0, -vp_height, 0};
+  v3f32 vp_x = vp_width * u;
+  v3f32 vp_y = vp_height * -v;
 
   v3f32 px_dt_x = vp_x / static_cast<f32>(img_width);
   v3f32 px_dt_y = vp_y / static_cast<f32>(img_height);
 
-  v3f32 vp_ul     = center - v3f32{0, 0, focal_length} - vp_x / 2 - vp_y / 2;
+  v3f32 vp_ul     = pos - (focal_len * w) - vp_x / 2 - vp_y / 2;
   v3f32 px_origin = vp_ul + 0.5f * (px_dt_x + px_dt_y);
 
   return camera{
-      .vfov             = vfov,
       .aspect_ratio     = aspect_ratio,
       .img_width        = img_width,
       .max_depth        = max_depth,
       .samples_per_px   = samples_per_px,
-      .center           = center,
+      .vfov             = vfov,
+      .up               = up,
+      .center           = pos,
+      .target           = target,
       .img_height       = img_height,
       .px_samples_scale = px_samples_scale,
+      .px_origin        = px_origin,
       .px_dt_x          = px_dt_x,
       .px_dt_y          = px_dt_y,
-      .px_origin        = px_origin,
   };
 }
 
