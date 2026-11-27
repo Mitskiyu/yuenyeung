@@ -3,13 +3,13 @@
 #include "base/base_math.h"
 #include "base/base_random.h"
 #include "base/base_types.h"
-#include "pt/pt_color.h"
 #include "pt/pt_geom.h"
 #include "pt/pt_material.h"
 
 #include <cmath>
 #include <cstdio>
 #include <print>
+#include <vector>
 
 namespace pt {
 
@@ -93,10 +93,10 @@ camera make_camera(const camera_settings &s) {
   };
 }
 
-void render(const scene &world, const camera &cam) {
-  std::println("P3\n{} {}\n255", cam.img_width, cam.img_height);
+std::vector<v3f32> render(const scene &world, const camera &cam) {
+  std::vector<v3f32> pixels(cam.img_width * cam.img_height);
   for (i32 y{}; y < cam.img_height; y++) {
-    std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
+    std::print(stderr, "\rScanlines remaining: {}", cam.img_height - y);
 
     for (i32 x{}; x < cam.img_width; x++) {
       v3f32 px_color{0, 0, 0};
@@ -105,10 +105,11 @@ void render(const scene &world, const camera &cam) {
         px_color += ray_color(world, r, cam.max_depth);
       }
 
-      std::println("{}", write_color(cam.px_samples_scale * px_color));
+      pixels[y * cam.img_width + x] = cam.px_samples_scale * px_color;
     }
   }
 
   std::println(stderr, "\rDone                       ");
+  return pixels;
 }
 } // namespace pt

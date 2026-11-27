@@ -5,6 +5,8 @@
 #include "base/base_types.h"
 #include "pt/pt_geom.h"
 
+#include <vector>
+
 namespace pt {
 
 struct camera_settings {
@@ -37,9 +39,8 @@ struct camera {
   v3f32 defocus_disk_x, defocus_disk_y;
 };
 
-camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
-                   i32 samples_per_px);
-void   render(const scene &world, const camera &cam);
+camera             make_camera(const camera_settings &s);
+std::vector<v3f32> render(const scene &world, const camera &cam);
 } // namespace pt
 
 #endif

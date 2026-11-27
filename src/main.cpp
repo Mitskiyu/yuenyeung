@@ -1,19 +1,20 @@
-#if _WIN32
-#include "base/base_os.h"
-#endif
-
 #include "base/base_math.h"
+#include "base/base_os.h"
 #include "base/base_random.h"
 #include "base/base_types.h"
+#include "pt/pt_color.h"
 #include "pt/pt_geom.h"
 #include "pt/pt_material.h"
 #include "pt/pt_render.h"
 
 #include "pt/pt_render.cpp"
+#if _WIN32
 #include "win32/win32_base.cpp"
+#endif
 
 #include <cstdio>
 #include <print>
+#include <vector>
 
 int main() {
   pt::scene world;
@@ -65,7 +66,10 @@ int main() {
   });
 
   u64 before = time_now_us();
-  pt::render(world, cam);
-  f64 secs = static_cast<f64>(time_now_us() - before) / 1e6;
-  std::println(stderr, "{:.3f}s", secs);
+
+  std::vector<v3f32> pixels = pt::render(world, cam);
+
+  f64 total = static_cast<f64>(time_now_us() - before) / 1e6;
+  std::println(stderr, "{:.3f}s", total);
+  pt::write_ppm(pixels, cam.img_width, cam.img_height);
 }

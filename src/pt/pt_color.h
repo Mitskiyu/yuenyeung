@@ -6,7 +6,9 @@
 
 #include <cmath>
 #include <format>
+#include <print>
 #include <string>
+#include <vector>
 
 namespace pt {
 
@@ -38,6 +40,14 @@ inline std::string write_color(v3f32 color) {
   i32 bb = static_cast<i32>(256 * clamp(intensity, b));
 
   return std::format("{} {} {}", rb, gb, bb);
+}
+
+inline void write_ppm(const std::vector<v3f32> &pixels, i32 width, i32 height) {
+  std::println("P3\n{} {}\n255", width, height);
+
+  for (v3f32 p : pixels) {
+    std::println("{}", write_color(p));
+  }
 }
 } // namespace pt
 
