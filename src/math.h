@@ -101,6 +101,10 @@ inline v3f32 cross(v3f32 a, v3f32 b) {
   return {a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x};
 }
 
+inline v3f32 reflect(v3f32 v, v3f32 n) {
+  return v - 2 * dot(v, n) * n;
+}
+
 inline f32 lensq(v3f32 v) {
   return dot(v, v);
 }

@@ -3,6 +3,7 @@
 #include "base.h"
 #include "color.h"
 #include "geom.h"
+#include "material.h"
 #include "math.h"
 #include "random.h"
 
@@ -29,8 +30,11 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
 
   constexpr f32 t_min = 0.001f;
   if (auto h = isect(world, r, {t_min, inf})) {
-    v3f32 dir = h->normal + rand_v3f32_unit();
-    return 0.5f * (ray_color(world, ray{h->p, dir}, --depth));
+    material mat = world.materials[h->mat_idx];
+    if (auto b = scatter(mat, r.dir, h->normal))
+      return b->atten * ray_color(world, ray{h->p, b->dir}, depth - 1);
+
+    return {0, 0, 0};
   }
 
   v3f32 unit_dir = unit(r.dir);

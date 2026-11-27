@@ -2,6 +2,7 @@
 #define YUENYEUNG_GEOM_H
 
 #include "base.h"
+#include "material.h"
 #include "math.h"
 
 #include <cmath>
@@ -16,17 +17,20 @@ struct ray {
 struct sphere {
   v3f32 center;
   f32   radius;
+  u16   mat_idx;
 };
 
 struct hit {
   v3f32 normal;
   v3f32 p;
   f32   t;
+  u16   mat_idx;
   bool  outside;
 };
 
 struct scene {
-  std::vector<sphere> spheres;
+  std::vector<sphere>   spheres;
+  std::vector<material> materials;
 };
 
 inline v3f32 at(ray r, f32 t) {
@@ -56,7 +60,11 @@ inline std::optional<hit> isect(sphere s, ray r, interval t_range) {
   v3f32 outward = (p - s.center) / s.radius;
   bool  outside = dot(r.dir, outward) < 0;
 
-  return hit{outside ? outward : -outward, p, root, outside};
+  return hit{.normal  = outside ? outward : -outward,
+             .p       = p,
+             .t       = root,
+             .mat_idx = s.mat_idx,
+             .outside = outside};
 }
 
 inline std::optional<hit> isect(const scene &s, ray r, interval t_range) {
