@@ -2,6 +2,8 @@
 #include "geom.h"
 #include "render.h"
 
+#include "render.cpp"
+
 int main() {
   f32    aspect_ratio   = 16.0f / 9.0f;
   i32    img_width      = 1024;

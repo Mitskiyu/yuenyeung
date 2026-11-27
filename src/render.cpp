@@ -1,31 +1,43 @@
-#ifndef YUENYEUNG_RENDER_H
-#define YUENYEUNG_RENDER_H
+#include "render.h"
 
-#include "base.h"
 #include "color.h"
 #include "geom.h"
-#include "math.h"
 #include "random.h"
 
-#include <cstdio>
 #include <print>
 
-struct camera {
-  f32   aspect_ratio;
-  i32   img_width;
-  i32   max_depth;
-  i32   samples_per_px;
-  v3f32 center;
+static v3f32 sample_sq() {
+  return v3f32{rand_f32() - 0.5f, rand_f32() - 0.5f, 0};
+}
 
-  // computed
-  i32   img_height;
-  f32   px_samples_scale;
-  v3f32 px_dt_x, px_dt_y;
-  v3f32 px_origin;
-};
+static ray get_ray(const camera &cam, i32 x, i32 y) {
+  v3f32 offset    = sample_sq();
+  v3f32 px_sample = cam.px_origin +
+                    ((static_cast<f32>(x) + offset.x) * cam.px_dt_x) +
+                    ((static_cast<f32>(y) + offset.y) * cam.px_dt_y);
 
-inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
-                          i32 samples_per_px) {
+  v3f32 ray_dir = px_sample - cam.center;
+  return ray{cam.center, ray_dir};
+}
+
+static v3f32 ray_color(const scene &world, ray r, i32 depth) {
+  if (depth <= 0)
+    return v3f32{};
+
+  constexpr f32 t_min = 0.001f;
+  if (auto h = isect(world, r, {t_min, inf})) {
+    v3f32 dir = h->normal + rand_v3f32_unit();
+    return 0.5f * (ray_color(world, ray{h->p, dir}, --depth));
+  }
+
+  v3f32 unit_dir = unit(r.dir);
+  f32   t        = 0.5f * (unit_dir.y + 1);
+
+  return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
+}
+
+camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
+                   i32 samples_per_px) {
   i32 img_height = static_cast<i32>(img_width / aspect_ratio);
   img_height     = (img_height < 1) ? 1 : img_height;
 
@@ -60,37 +72,7 @@ inline camera make_camera(f32 aspect_ratio, i32 img_width, i32 max_depth,
   };
 }
 
-inline v3f32 sample_sq() {
-  return v3f32{rand_f32() - 0.5f, rand_f32() - 0.5f, 0};
-}
-
-inline ray get_ray(const camera &cam, i32 x, i32 y) {
-  v3f32 offset    = sample_sq();
-  v3f32 px_sample = cam.px_origin +
-                    ((static_cast<f32>(x) + offset.x) * cam.px_dt_x) +
-                    ((static_cast<f32>(y) + offset.y) * cam.px_dt_y);
-
-  v3f32 ray_dir = px_sample - cam.center;
-  return ray{cam.center, ray_dir};
-}
-
-inline v3f32 ray_color(const scene &world, ray r, i32 depth) {
-  if (depth <= 0)
-    return v3f32{};
-
-  constexpr f32 t_min = 0.001f;
-  if (auto h = isect(world, r, {t_min, inf})) {
-    v3f32 dir = h->normal + rand_v3f32_unit();
-    return 0.5f * (ray_color(world, ray{h->p, dir}, --depth));
-  }
-
-  v3f32 unit_dir = unit(r.dir);
-  f32   t        = 0.5f * (unit_dir.y + 1);
-
-  return (1 - t) * v3f32{1, 1, 1} + t * v3f32{0.5f, 0.7f, 1};
-}
-
-inline void render(const scene &world, const camera &cam) {
+void render(const scene &world, const camera &cam) {
   std::println("P3\n{} {}\n255", cam.img_width, cam.img_height);
   for (i32 y{}; y < cam.img_height; y++) {
     std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
@@ -108,5 +90,3 @@ inline void render(const scene &world, const camera &cam) {
 
   std::println(stderr, "\rDone                       ");
 }
-
-#endif

@@ -8,5 +8,5 @@ if "%1"=="release" (
 
 if not exist build mkdir build
 pushd build
-cl /nologo %flags% /std:c++latest /EHsc /utf-8 /W4 /Zi ..\main.cpp
+cl /nologo %flags% /std:c++latest /EHsc /utf-8 /W4 /Zi ..\src\main.cpp
 popd
