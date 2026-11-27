@@ -36,6 +36,14 @@ struct bounce {
   v3f32 atten;
 };
 
+inline f32 reflectance(f32 cosine, f32 eta_ratio) {
+  f32 f0 = (1 - eta_ratio) / (1 + eta_ratio);
+  f0     = f0 * f0;
+
+  f32 t = 1 - cosine;
+  return f0 + (1 - f0) * t * t * t * t * t;
+}
+
 inline std::optional<bounce> scatter(material mat, v3f32 inc_dir, v3f32 normal,
                                      bool outside) {
   switch (mat.kind) {
@@ -68,7 +76,8 @@ inline std::optional<bounce> scatter(material mat, v3f32 inc_dir, v3f32 normal,
     f32   cos_theta = std::min<f32>(dot(-dir, normal), 1);
     f32   sin_theta = std::sqrt(1 - cos_theta * cos_theta);
 
-    if (eta_ratio * sin_theta > 1)
+    bool tir = eta_ratio * sin_theta > 1;
+    if (tir || reflectance(cos_theta, eta_ratio) > rand_f32())
       dir = reflect(dir, normal);
     else
       dir = refract(dir, normal, eta_ratio);
