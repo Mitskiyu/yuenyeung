@@ -2,10 +2,10 @@
 #include "base/base_os.h"
 #include "base/base_types.h"
 #include "demo/demo_spheres.h"
-#include "pt/pt_color.h"
-#include "pt/pt_render.h"
+#include "tracer/tracer_color.h"
+#include "tracer/tracer_render.h"
 
-#include "pt/pt_render.cpp"
+#include "tracer/tracer_render.cpp"
 #if _WIN32
 #include "win32/win32_base.cpp"
 #endif
@@ -19,7 +19,7 @@ int main() {
   d.desc.aspect_ratio   = 16.0f / 9.0f;
   d.desc.img_width      = 1200;
   d.desc.max_depth      = 50;
-  d.desc.samples_per_px = 500;
+  d.desc.samples_per_px = 100;
   pt::camera cam        = pt::make_camera(d.desc);
 
   u64 before = time_now_us();

@@ -1,5 +1,5 @@
-#ifndef YUENYEUNG_PT_COLOR_H
-#define YUENYEUNG_PT_COLOR_H
+#ifndef YUENYEUNG_TRACER_COLOR_H
+#define YUENYEUNG_TRACER_COLOR_H
 
 #include "base/base_math.h"
 #include "base/base_types.h"

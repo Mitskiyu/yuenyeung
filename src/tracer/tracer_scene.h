@@ -1,10 +1,10 @@
-#ifndef YUENYEUNG_PT_SCENE_H
-#define YUENYEUNG_PT_SCENE_H
+#ifndef YUENYEUNG_TRACER_SCENE_H
+#define YUENYEUNG_TRACER_SCENE_H
 
 #include "base/base_math.h"
 #include "base/base_types.h"
-#include "pt/pt_geom.h"
-#include "pt/pt_material.h"
+#include "tracer/tracer_geom.h"
+#include "tracer/tracer_material.h"
 
 #include <optional>
 #include <vector>

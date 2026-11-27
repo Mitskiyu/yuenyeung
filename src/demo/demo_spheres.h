@@ -4,9 +4,9 @@
 #include "base/base_math.h"
 #include "base/base_random.h"
 #include "base/base_types.h"
-#include "pt/pt_material.h"
-#include "pt/pt_render.h"
-#include "pt/pt_scene.h"
+#include "tracer/tracer_material.h"
+#include "tracer/tracer_render.h"
+#include "tracer/tracer_scene.h"
 
 namespace demo {
 

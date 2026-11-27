@@ -1,5 +1,5 @@
-#ifndef YUENYEUNG_PT_GEOM_H
-#define YUENYEUNG_PT_GEOM_H
+#ifndef YUENYEUNG_TRACER_GEOM_H
+#define YUENYEUNG_TRACER_GEOM_H
 
 #include "base/base_math.h"
 #include "base/base_types.h"

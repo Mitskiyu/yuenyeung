@@ -1,11 +1,11 @@
-#include "pt/pt_render.h"
+#include "tracer/tracer_render.h"
 
 #include "base/base_math.h"
 #include "base/base_random.h"
 #include "base/base_types.h"
-#include "pt/pt_geom.h"
-#include "pt/pt_material.h"
-#include "pt/pt_scene.h"
+#include "tracer/tracer_geom.h"
+#include "tracer/tracer_material.h"
+#include "tracer/tracer_scene.h"
 
 #include <cmath>
 #include <cstdio>
@@ -98,7 +98,7 @@ camera make_camera(const camera_desc &desc) {
 std::vector<v3f32> render(const scene &world, const camera &cam) {
   std::vector<v3f32> pixels(cam.img_width * cam.img_height);
   for (i32 y{}; y < cam.img_height; y++) {
-    std::print(stderr, "\rScanlines remaining: {}", cam.img_height - y);
+    std::print(stderr, "\rScanlines remaining: {} ", cam.img_height - y);
 
     for (i32 x{}; x < cam.img_width; x++) {
       v3f32 px_color{0, 0, 0};

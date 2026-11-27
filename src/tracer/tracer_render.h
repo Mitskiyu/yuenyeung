@@ -1,9 +1,9 @@
-#ifndef YUENYEUNG_PT_RENDER_H
-#define YUENYEUNG_PT_RENDER_H
+#ifndef YUENYEUNG_TRACER_RENDER_H
+#define YUENYEUNG_TRACER_RENDER_H
 
 #include "base/base_math.h"
 #include "base/base_types.h"
-#include "pt/pt_scene.h"
+#include "tracer/tracer_scene.h"
 
 #include <vector>
 

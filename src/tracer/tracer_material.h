@@ -1,5 +1,5 @@
-#ifndef YUENYEUNG_PT_MATERIAL_H
-#define YUENYEUNG_PT_MATERIAL_H
+#ifndef YUENYEUNG_TRACER_MATERIAL_H
+#define YUENYEUNG_TRACER_MATERIAL_H
 
 #include "base/base_math.h"
 #include "base/base_random.h"
