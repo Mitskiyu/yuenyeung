@@ -14,15 +14,23 @@ int main() {
 
   scene world;
 
-  world.materials.push_back(material{material_kind::matte, {0.8f, 0.8f, 0}});
-  world.materials.push_back(material{material_kind::matte, {0.1f, 0.2f, 0.5f}});
-  world.materials.push_back(material{material_kind::metal, {0.8f, 0.8f, 0.8f}});
-  world.materials.push_back(material{material_kind::metal, {0.8f, 0.6f, 0.2f}});
+  world.materials = {
+      {.albedo = {0.8f, 0.8f, 0.0f}, .kind = material_kind::matte},
+      {.albedo = {0.1f, 0.2f, 0.5f}, .kind = material_kind::matte},
+      {.albedo = {0.8f, 0.8f, 0.8f},
+       .fuzz   = 0.3f,
+       .kind   = material_kind::metal},
+      {.albedo = {0.8f, 0.6f, 0.2f},
+       .fuzz   = 1.0f,
+       .kind   = material_kind::metal},
+  };
 
-  world.spheres.push_back({{0, -100.5f, -1}, 100, 0});
-  world.spheres.push_back({{0, 0, -1.2f}, 0.5f, 1});
-  world.spheres.push_back({{-1, 0, -1}, 0.5f, 2});
-  world.spheres.push_back({{1, 0, -1}, 0.5f, 3});
+  world.spheres = {
+      {{0, -100.5f, -1}, 100, 0},
+      {{0, 0, -1.2f}, 0.5f, 1},
+      {{-1, 0, -1}, 0.5f, 2},
+      {{1, 0, -1}, 0.5f, 3},
+  };
 
   render(world, cam);
 }

@@ -10,8 +10,10 @@
 enum class material_kind : u8 { matte, metal };
 
 struct material {
+  v3f32 albedo;
+  f32   fuzz;
+
   material_kind kind;
-  v3f32         albedo;
 };
 
 struct bounce {
@@ -34,7 +36,11 @@ inline std::optional<bounce> scatter(material mat, v3f32 inc_dir,
 
   case material_kind::metal: {
     v3f32 dir   = reflect(inc_dir, normal);
+    dir         = unit(dir) + (mat.fuzz * rand_v3f32_unit());
     v3f32 atten = mat.albedo;
+
+    if (dot(dir, normal) <= 0)
+      break;
 
     return bounce{dir, atten};
   }
