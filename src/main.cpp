@@ -17,7 +17,7 @@ int main() {
   world.materials = {
       make_matte({0.8f, 0.8f, 0.0f}),
       make_matte({0.1f, 0.2f, 0.5f}),
-      make_dielectric(1.5f),
+      make_dielectric(1 / 1.33f),
       make_metal({0.8f, 0.6f, 0.2f}, 1),
   };
 

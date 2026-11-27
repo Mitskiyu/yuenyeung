@@ -5,6 +5,8 @@
 #include "math.h"
 #include "random.h"
 
+#include <algorithm>
+#include <cmath>
 #include <optional>
 
 enum class material_kind : u8 { matte, metal, dielectric };
@@ -62,8 +64,14 @@ inline std::optional<bounce> scatter(material mat, v3f32 inc_dir, v3f32 normal,
     v3f32 atten     = {1, 1, 1};
     f32   eta_ratio = outside ? (1 / mat.ior) : mat.ior;
 
-    v3f32 dir = unit(inc_dir);
-    dir       = refract(dir, normal, eta_ratio);
+    v3f32 dir       = unit(inc_dir);
+    f32   cos_theta = std::min<f32>(dot(-dir, normal), 1);
+    f32   sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+
+    if (eta_ratio * sin_theta > 1)
+      dir = reflect(dir, normal);
+    else
+      dir = refract(dir, normal, eta_ratio);
 
     return bounce{dir, atten};
   }
