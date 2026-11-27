@@ -37,12 +37,4 @@ inline v3f32 rand_v3f32_unit() {
   }
 }
 
-inline v3f32 rand_v3f32_hemi(v3f32 normal) {
-  v3f32 v = rand_v3f32_unit();
-  if (dot(v, normal) > 0)
-    return v;
-  else
-    return -v;
-}
-
 #endif

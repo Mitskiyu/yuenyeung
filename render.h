@@ -80,7 +80,7 @@ inline v3f32 ray_color(const scene &world, ray r, i32 depth) {
 
   constexpr f32 t_min = 0.001f;
   if (auto h = isect(world, r, {t_min, inf})) {
-    v3f32 dir = rand_v3f32_hemi(h->normal);
+    v3f32 dir = h->normal + rand_v3f32_unit();
     return 0.5f * (ray_color(world, ray{h->p, dir}, --depth));
   }
 
