@@ -3,7 +3,9 @@ AlignConsecutiveDeclarations: Consecutive
 AllowShortFunctionsOnASingleLine: None
 IncludeBlocks: Regroup
 IncludeCategories:
+  - Regex: '^".*\.cpp"'
+    Priority: 2
   - Regex: '^".*"'
     Priority: 1
   - Regex: '^<.*>'
-    Priority: 2
+    Priority: 3
