@@ -17,9 +17,7 @@ int main() {
   world.materials = {
       {.albedo = {0.8f, 0.8f, 0.0f}, .kind = material_kind::matte},
       {.albedo = {0.1f, 0.2f, 0.5f}, .kind = material_kind::matte},
-      {.albedo = {0.8f, 0.8f, 0.8f},
-       .fuzz   = 0.3f,
-       .kind   = material_kind::metal},
+      {.ior = 1.5f, .kind = material_kind::dielectric},
       {.albedo = {0.8f, 0.6f, 0.2f},
        .fuzz   = 1.0f,
        .kind   = material_kind::metal},

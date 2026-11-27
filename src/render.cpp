@@ -31,7 +31,7 @@ static v3f32 ray_color(const scene &world, ray r, i32 depth) {
   constexpr f32 t_min = 0.001f;
   if (auto h = isect(world, r, {t_min, inf})) {
     material mat = world.materials[h->mat_idx];
-    if (auto b = scatter(mat, r.dir, h->normal))
+    if (auto b = scatter(mat, r.dir, h->normal, h->outside))
       return b->atten * ray_color(world, ray{h->p, b->dir}, depth - 1);
 
     return {0, 0, 0};

@@ -7,11 +7,12 @@
 
 #include <optional>
 
-enum class material_kind : u8 { matte, metal };
+enum class material_kind : u8 { matte, metal, dielectric };
 
 struct material {
   v3f32 albedo;
   f32   fuzz;
+  f32   ior;
 
   material_kind kind;
 };
@@ -21,8 +22,8 @@ struct bounce {
   v3f32 atten;
 };
 
-inline std::optional<bounce> scatter(material mat, v3f32 inc_dir,
-                                     v3f32 normal) {
+inline std::optional<bounce> scatter(material mat, v3f32 inc_dir, v3f32 normal,
+                                     bool outside) {
   switch (mat.kind) {
   case material_kind::matte: {
     constexpr f32 threshold = 1e-8f;
@@ -41,6 +42,16 @@ inline std::optional<bounce> scatter(material mat, v3f32 inc_dir,
 
     if (dot(dir, normal) <= 0)
       break;
+
+    return bounce{dir, atten};
+  }
+
+  case material_kind::dielectric: {
+    v3f32 atten     = {1, 1, 1};
+    f32   eta_ratio = outside ? (1 / mat.ior) : mat.ior;
+
+    v3f32 dir = unit(inc_dir);
+    dir       = refract(dir, normal, eta_ratio);
 
     return bounce{dir, atten};
   }

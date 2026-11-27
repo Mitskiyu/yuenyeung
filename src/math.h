@@ -3,6 +3,7 @@
 
 #include "base.h"
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <numbers>
@@ -101,16 +102,24 @@ inline v3f32 cross(v3f32 a, v3f32 b) {
   return {a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x};
 }
 
-inline v3f32 reflect(v3f32 v, v3f32 n) {
-  return v - 2 * dot(v, n) * n;
-}
-
 inline f32 lensq(v3f32 v) {
   return dot(v, v);
 }
 
 inline f32 len(v3f32 v) {
   return std::sqrt(lensq(v));
+}
+
+inline v3f32 reflect(v3f32 v, v3f32 n) {
+  return v - 2 * dot(v, n) * n;
+}
+
+inline v3f32 refract(v3f32 v, v3f32 n, f32 eta_ratio) {
+  f32   cos_theta = std::min<f32>(dot(-v, n), 1);
+  v3f32 perp      = eta_ratio * (v + cos_theta * n);
+  v3f32 para      = -std::sqrt(std::fabs(1 - lensq(perp))) * n;
+
+  return perp + para;
 }
 
 inline v3f32 unit(v3f32 v) {
