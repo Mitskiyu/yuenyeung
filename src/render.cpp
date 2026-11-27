@@ -1,9 +1,12 @@
 #include "render.h"
 
+#include "base.h"
 #include "color.h"
 #include "geom.h"
+#include "math.h"
 #include "random.h"
 
+#include <cstdio>
 #include <print>
 
 static v3f32 sample_sq() {

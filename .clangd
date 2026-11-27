@@ -2,7 +2,7 @@ If:
   PathMatch: .*\.h
 CompileFlags:
   Add: [-xc++]
-
+---
 Diagnostics:
   UnusedIncludes: Strict
   MissingIncludes: Strict
